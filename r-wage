@@ -1,0 +1,169 @@
+##############################################################################
+##Author:Abhishek karanam 
+#date: 01/26/2018
+##############################################################################
+
+#dropping all variables from the global environment
+rm(list=ls(all=TRUE))
+
+###import library
+library(data.table)
+
+#reading the file into datatable
+content1 <- fread('WAGE1.csv')
+summary(content1)
+#              storage   display    value
+#variable name   type    format     label      variable label
+#--------------------------------------------------------------------------------
+#  wage            float   %8.2g                 average hourly earnings
+#educ            byte    %8.0g                 years of education
+#exper           byte    %8.0g                 years potential experience
+#tenure          byte    %8.0g                 years with current employer
+#nonwhite        byte    %8.0g                 =1 if nonwhite
+#female          byte    %8.0g                 =1 if female
+#married         byte    %8.0g                 =1 if married
+#numdep          byte    %8.0g                 number of dependents
+#smsa            byte    %8.0g                 =1 if live in SMSA
+#northcen        byte    %8.0g                 =1 if live in north central U.S
+#south           byte    %8.0g                 =1 if live in southern region
+#west            byte    %8.0g                 =1 if live in western region
+#construc        byte    %8.0g                 =1 if work in construc. indus.
+#ndurman         byte    %8.0g                 =1 if in nondur. manuf. indus.
+#trcommpu        byte    %8.0g                 =1 if in trans, commun, pub ut
+#trade           byte    %8.0g                 =1 if in wholesale or retail
+#services        byte    %8.0g                 =1 if in services indus.
+#profserv        byte    %8.0g                 =1 if in prof. serv. indus.
+#profocc         byte    %8.0g                 =1 if in profess. occupation
+#clerocc         byte    %8.0g                 =1 if in clerical occupation
+#servocc         byte    %8.0g                 =1 if in service occupation
+
+###############################################################################
+#genereation of new variable
+lwage <- log(content1$wage)
+
+###############################################################################
+#models
+model1 <- lm(wage ~ educ,data=content1)
+model2 <- lm(wage ~ educ + exper + tenure, data=content1)
+model3 <- lm(lwage ~ educ + exper + tenure, data=content1)
+
+###############################################################################
+#summary of model1
+summary(model1)
+
+# Call:
+#   lm(formula = wage ~ educ, data = content1)
+# 
+# Residuals:
+#   Min      1Q  Median      3Q     Max 
+# -5.3707 -2.1578 -0.9854  1.1864 16.3975 
+# 
+# Coefficients:
+#   Estimate Std. Error t value Pr(>|t|)    
+# (Intercept) -0.93389    0.68769  -1.358    0.175    
+# educ         0.54470    0.05346  10.189   <2e-16 ***
+#   ---
+#   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+# 
+# Residual standard error: 3.392 on 524 degrees of freedom
+# Multiple R-squared:  0.1654,	Adjusted R-squared:  0.1638 
+# F-statistic: 103.8 on 1 and 524 DF,  p-value: < 2.2e-16
+
+#################################################################################
+#summary of model2
+summary(model2)
+
+
+# Call:
+#   lm(formula = wage ~ educ + exper + tenure, data = content1)
+# 
+# Residuals:
+#   Min      1Q  Median      3Q     Max 
+# -7.6498 -1.7708 -0.6407  1.2051 14.7201 
+# 
+# Coefficients:
+#   Estimate Std. Error t value Pr(>|t|)    
+# (Intercept) -2.91354    0.73172  -3.982 7.81e-05 ***
+#   educ         0.60268    0.05148  11.708  < 2e-16 ***
+#   exper        0.02252    0.01210   1.861   0.0633 .  
+# tenure       0.17002    0.02173   7.825 2.83e-14 ***
+#   ---
+#   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+# 
+# Residual standard error: 3.096 on 522 degrees of freedom
+# Multiple R-squared:  0.3072,	Adjusted R-squared:  0.3032 
+# F-statistic: 77.15 on 3 and 522 DF,  p-value: < 2.2e-16
+
+##################################################################################
+#summary of model3
+summary(model3)
+
+# Call:
+#   lm(formula = lwage ~ educ + exper + tenure, data = content1)
+# 
+# Residuals:
+#   Min       1Q   Median       3Q      Max 
+# -2.05911 -0.29563 -0.03302  0.28590  1.42657 
+# 
+# Coefficients:
+#   Estimate Std. Error t value Pr(>|t|)    
+# (Intercept) 0.282635   0.104331   2.709  0.00697 ** 
+#   educ        0.092256   0.007340  12.569  < 2e-16 ***
+#   exper       0.004137   0.001726   2.397  0.01687 *  
+#   tenure      0.022112   0.003098   7.138 3.19e-12 ***
+#   ---
+#   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+# 
+# Residual standard error: 0.4415 on 522 degrees of freedom
+# Multiple R-squared:  0.3165,	Adjusted R-squared:  0.3125 
+# F-statistic: 80.56 on 3 and 522 DF,  p-value: < 2.2e-16
+
+################################################################################
+#
+#Interpretations
+#
+################################################################################
+#
+# model1 :
+#   wage = -0.93 + 0.54 educ
+#
+################################################################################
+#
+#a. Every 1 additional year of education is associated with a 0.54 increase in 
+#    average hourly earning
+################################################################################
+#
+#model2 :
+#   wage = -2.91 + 0.60 educ + 0.02 exper + 0.17 tenure
+#
+################################################################################
+#
+#b. Every 1 additional year of education is associated with a 0.6 increase in 
+#   average hourly earning
+#
+#c. Every 1 additional year of experience is associated with a 0.02 increase in
+#   average hourly earning
+#
+#d. Every 1 additional year of employment with the current employer is associated 
+#   with a 0.17 increase in average hourly earning
+#
+#e. The hourly wage associate with 0 years of education 0 years of experience 
+#   and 0 years of employment with the current employer(tenure) is -2.91
+#
+#################################################################################
+#
+#model3:
+#   lwage = 0.282 + 0.092 educ + 0.004 exper + 0.022 tenure
+#
+#################################################################################
+#
+#f. Every 1 additional year of education is associated with a 9.2% increase in 
+#   average hourly earning
+#
+#g. Every 1 additional year of experience is associated with a 0.4% increase in
+#   average hourly earning
+#
+#h. Every 1 additional year of employment with the current employer is associated 
+#   witha a 2.2% increase in average hourly earning
+#
+#################################################################################
